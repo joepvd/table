@@ -30,11 +30,10 @@ function max(x, y) {
     else return y
 }
 
-function format_line(to_print, stype) {
-    printf "%s%s", style["left"][role], to_print[1]
-    for(k=2; k<=length(to_print); k++) {
-        printf "%s%s", style["middle"][role], to_print[k]
-    }
+function format_line(line, stype) {
+    printf "%s%s", style["left"][role], line[1]
+    for(k=2; k<=length(line); k++)
+        printf "%s%s", style["middle"][role], line[k]
     printf "%s\n", style["right"][role]
 }
 
@@ -54,15 +53,9 @@ function pad(string, width, padchar) {
     return _s padchar
 }
 
-function format_table(contents) {
-    row_count = length(contents)
-    col_count = length(contents[1])
-    if (debug == "y") {
-        printf "Dimension of table: [%s x %s] ([rows x columns])\n", row_count, col_count
-    }
-    
+function colsize(contents) {    
     # Establishing the maximum size of the column contents, 
-    # store in contents["len"]: 
+    # store as a list in contents["len"]: 
     for (j=1; j<=col_count; j++) {
         _len = 0
         for (i=1; i<=row_count; i++) {
@@ -77,47 +70,55 @@ function format_table(contents) {
         }
         print "]"
     }
+}
+
+function format_table(contents) {
 
     for (i=1; i<=row_count; i++) {
         if (debug == "y") { printf "Formatting row %s.\n", i }
         if (i == 1) {
             role="head"
             for (j=1;j<=col_count;j++) {
-                to_print[j] = pad("", contents["len"][j], style["fill"][role])
+                line[j] = pad("", contents["len"][j], style["fill"][role])
             }
-            format_line(to_print, role)
+            format_line(line, role)
         }
         role="row"
         for (j=1; j<=col_count; j++) {
-            to_print[j] = pad(contents[i][j], contents["len"][j], style["fill"][role])
+            line[j] = pad(contents[i][j], contents["len"][j], style["fill"][role])
         }
-        format_line(to_print, role)
+        format_line(line, role)
         if ( i == 1 ) {
             role="sep"
             for (j=1; j<=col_count; j++) {
-                to_print[j] = pad("", contents["len"][j], style["fill"][role])
+                line[j] = pad("", contents["len"][j], style["fill"][role])
             }
-            format_line(to_print, role)
+            format_line(line, role)
         }
         if ( i == row_count) {
             role="foot"
             for (j=1; j<= col_count; j++) {
-                to_print[j] = pad("", contents["len"][j], style["fill"][role])
+                line[j] = pad("", contents["len"][j], style["fill"][role])
             }
-            format_line(to_print, role)
+            format_line(line, role)
         }
     }
 }
 
 {
-    split($0, _tmp)
-    for (i=1; i<=length(_tmp); i++) {
-        contents[NR][i] = _tmp[i]
-    }
+    # Storing the records in a two-dimensional array contents: 
+    split($0, tmp)
+    for (i=1; i<=length(tmp); i++)
+        contents[NR][i] = tmp[i]
+    delete tmp
 }
 
 ENDFILE {
     if (debug=="y") { for (i in contents) { for (j in contents[i]) { print i, j, contents[i][j] } } }
+    row_count = length(contents)
+    col_count = length(contents[1])
+    colsize(contents)
+    if (debug == "y") { printf "Dimension of table: [%s x %s] ([rows x columns])\n", row_count, col_count }
     format_table(contents)
 }
 
