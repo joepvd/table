@@ -56,16 +56,14 @@ function colsize(contents,                  i,j,_len,m) {
     # store as a list in contents["len"]: 
     for (j=1; j<=col_count; j++) {
         _len = 0
-        for (i=1; i<=row_count; i++) {
+        for (i=1; i<=row_count; i++)
             _len = max( _len, length(contents[i][j]) )
-        }
         contents["len"][j] = _len
     }
     if (debug == "y") {
         printf "contents[\"len\"]: [%s", contents["len"][1]
-        for (m=2; m<=length(contents["len"]); m++) {
+        for (m=2; m<=length(contents["len"]); m++)
             printf ", %s", contents["len"][m]
-        }
         print "]"
     }
 }
