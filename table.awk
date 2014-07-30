@@ -1,50 +1,46 @@
 #!/usr/bin/gawk -f
 
 BEGIN {
-    array[1]="qed"
-    delete array
-
-    if (id == "psql" || id == "") {
-        if (debug == "y") print "selecting style psql"
-        style["fill"]["head"]    = "─" 
-        style["fill"]["row"]     = " " 
-        style["fill"]["sep"]     = "─" 
-        style["fill"]["foot"]    = "─" 
-        style["left"]["head"]    = "┌"
-        style["left"]["row"]     = "│"
-        style["left"]["sep"]     = "├"
-        style["left"]["foot"]    = "└"
-        style["middle"]["head"]  = "┬"
-        style["middle"]["row"]   = "│"
-        style["middle"]["sep"]   = "┼"
-        style["middle"]["foot"]  = "┴"
-        style["right"]["head"]   = "┐"
-        style["right"]["row"]    = "│"
-        style["right"]["sep"]    = "┤"
-        style["right"]["foot"]   = "┘"
-    }
+    left=1; fill=2;middle=3;right=4;
+    style="rst"
+    # header="n"
 }
+
+# top
+# row
+# head
+# row
+# sep
+# row
+# bot
+
+function psql_head(place,   tmp) { split("┌─┬┐", tmp, ""); return tmp[place] }
+function psql_sep(place,    tmp) { split("├─┼┤", tmp, ""); return tmp[place] }
+function psql_row(place,    tmp) { split("│ ││", tmp, ""); return tmp[place] }
+function psql_foot(place,   tmp) { split("└─┴┘", tmp, ""); return tmp[place] }
+
+function rst_head(place,    tmp) { split("+-++", tmp, ""); return tmp[place] }
+function rst_sep(place,     tmp) { split("+=++", tmp, ""); return tmp[place] }
+function rst_row(place,     tmp) { split("| ||", tmp, ""); return tmp[place] }
+function rst_foot(place,    tmp) { split("+-++", tmp, ""); return tmp[place] }
 
 function max(x, y) {
     if (x > y) return x
     else return y
 }
 
-function format_line(line, stype) {
-    printf "%s%s", style["left"][role], line[1]
-    for(k=2; k<=length(line); k++)
-        printf "%s%s", style["middle"][role], line[k]
-    printf "%s\n", style["right"][role]
+function format_line(line, role,            glyph, i) {
+    glyph = style"_"role
+    printf "%s%s", @glyph(left), pad(line[1], contents["len"][1], @glyph(fill))
+    for(i=2; i<=length(line); i++)
+        printf "%s%s", @glyph(middle), pad(line[i], contents["len"][i], @glyph(fill))
+    printf "%s\n", @glyph(right)
 }
 
-function pad(string, width, padchar) {
+function pad(string, width, padchar,        _s) {
     # put character `padchar` around `string` so the result is `width + 2` long. 
     # `width + 2`, because there should always be a pad char to the left and to the 
     # right. 
-    if ( length(padchar) != 1 ) {
-        print "padding character should be a single character!"
-        exit 1
-    }
     if ( length(string) > width )
         string = substr(string, 1, width)
     _s = padchar string
@@ -53,7 +49,7 @@ function pad(string, width, padchar) {
     return _s padchar
 }
 
-function colsize(contents) {    
+function colsize(contents,                  i,j,_len,m) {    
     # Establishing the maximum size of the column contents, 
     # store as a list in contents["len"]: 
     for (j=1; j<=col_count; j++) {
@@ -72,36 +68,19 @@ function colsize(contents) {
     }
 }
 
-function format_table(contents) {
-
+function styler(contents,                   i, j, empty) {
+    for (j=1; j<=col_count; j++) 
+        empty[j] = ""
     for (i=1; i<=row_count; i++) {
-        if (debug == "y") { printf "Formatting row %s.\n", i }
-        if (i == 1) {
-            role="head"
-            for (j=1;j<=col_count;j++) {
-                line[j] = pad("", contents["len"][j], style["fill"][role])
-            }
-            format_line(line, role)
-        }
-        role="row"
-        for (j=1; j<=col_count; j++) {
-            line[j] = pad(contents[i][j], contents["len"][j], style["fill"][role])
-        }
-        format_line(line, role)
-        if ( i == 1 ) {
-            role="sep"
-            for (j=1; j<=col_count; j++) {
-                line[j] = pad("", contents["len"][j], style["fill"][role])
-            }
-            format_line(line, role)
-        }
-        if ( i == row_count) {
-            role="foot"
-            for (j=1; j<= col_count; j++) {
-                line[j] = pad("", contents["len"][j], style["fill"][role])
-            }
-            format_line(line, role)
-        }
+        if (i==1)
+            format_line(empty, "head")
+        if (style=="rst" && i>2)
+            format_line(empty, "foot") # Semantic bug
+        format_line(contents[i], "row")
+        if (i==1 && header~/^(y|)$/)
+            format_line(empty, "sep")
+        if (i==row_count)
+            format_line(empty, "foot")
     }
 }
 
@@ -119,6 +98,6 @@ ENDFILE {
     col_count = length(contents[1])
     colsize(contents)
     if (debug == "y") { printf "Dimension of table: [%s x %s] ([rows x columns])\n", row_count, col_count }
-    format_table(contents)
+    styler(contents)
 }
 
