@@ -1,4 +1,4 @@
-#!/usr/bin/gawk
+#!/usr/bin/gawk -f
 
 BEGIN {
     array[1]="qed"
