@@ -2,7 +2,7 @@
 
 BEGIN {
     left=1; fill=2;middle=3;right=4;
-    style="rst"
+    style="psql"
     # header="n"
 }
 
@@ -29,11 +29,13 @@ function max(x, y) {
     else return y
 }
 
-function format_line(line, role,            glyph, i) {
+function format_line(line, role,            glyph, i, cell) {
     glyph = style"_"role
-    printf "%s%s", @glyph(left), pad(line[1], contents["len"][1], @glyph(fill))
+    cell = pad(line[1], contents["len"][1], @glyph(fill))
+    printf "%s%s", @glyph(left), cell
     for(i=2; i<=length(line); i++)
-        printf "%s%s", @glyph(middle), pad(line[i], contents["len"][i], @glyph(fill))
+        cell = pad(line[i], contents["len"][i], @glyph(fill))
+        printf "%s%s", @glyph(middle), cell
     printf "%s\n", @glyph(right)
 }
 
