@@ -33,9 +33,10 @@ function format_line(line, role,            glyph, i, cell) {
     glyph = style"_"role
     cell = pad(line[1], contents["len"][1], @glyph(fill))
     printf "%s%s", @glyph(left), cell
-    for(i=2; i<=length(line); i++)
+    for(i=2; i<=col_count; i++) {
         cell = pad(line[i], contents["len"][i], @glyph(fill))
         printf "%s%s", @glyph(middle), cell
+    }
     printf "%s\n", @glyph(right)
 }
 
