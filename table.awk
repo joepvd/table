@@ -1,9 +1,35 @@
-#!/usr/bin/gawk -f
+#!/usr/bin/gawk -E
+
 
 BEGIN {
     left=1; fill=2;middle=3;right=4;
     style="psql"
     # header="n"
+
+    for (i in ARGV) {
+        switch (ARGV[i]) {
+            case "-s":
+                style = ARGV[i+1]
+                if (style != "psql" && style != "rst") {
+                    printf "Fatal: Style %s not recognized.\n", style >"/dev/stderr"
+                    exit 1
+                }
+                delete ARGV[i]
+                delete ARGV[i+1]
+                continue
+            case "-F":
+                FS = ARGV[i+1]
+                delete ARGV[i]
+                delete ARGV[i+1]
+                continue
+            case "-d":
+                debug="y"
+                continue
+            case "-h":
+                usage()
+                continue
+        }
+    }
 }
 
 # top
@@ -13,6 +39,14 @@ BEGIN {
 # sep
 # row
 # bot
+
+function usage() {
+    print "usage stub"
+}
+
+# The following functions return the glyph for a certain style, role and place
+# tuple. They are called as indirect functions, where the function name is 
+# generated from variables. 
 
 function psql_head(place,   tmp) { split("┌─┬┐", tmp, ""); return tmp[place] }
 function psql_sep(place,    tmp) { split("├─┼┤", tmp, ""); return tmp[place] }
@@ -93,7 +127,7 @@ function styler(contents,                   i, j, empty) {
     delete tmp
 }
 
-ENDFILE {
+END {
     if (debug=="y") { for (i in contents) { for (j in contents[i]) { print i, j, contents[i][j] } } }
     row_count = length(contents)
     col_count = length(contents[1])
