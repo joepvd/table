@@ -124,13 +124,10 @@ function styler(contents,                   i, j, empty) {
 }
 
 END {
-    if (debug=="yes") {
-        for (i in contents) {
-            for (j in contents[i]) {
+    if (debug=="yes")
+        for (i in contents)
+            for (j in contents[i])
                 print i, j, contents[i][j] >"/dev/stderr"
-            }
-        }
-    }
     row_count = length(contents)
     colsize(contents)
     if (debug == "yes") {
