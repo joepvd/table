@@ -120,6 +120,7 @@ function styler(contents,                   i, j, empty) {
     for (i=1; i<=length(tmp); i++)
         contents[NR][i] = tmp[i]
     delete tmp
+    col_count = max(col_count, length(contents[NR]))
 }
 
 END {
@@ -131,9 +132,6 @@ END {
         }
     }
     row_count = length(contents)
-    if (isarray(contents)){
-        col_count = length(contents[1])
-    }
     colsize(contents)
     if (debug == "yes") {
         printf("Dimension of table: [%s x %s] ([rows x columns])\n",
