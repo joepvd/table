@@ -8,16 +8,17 @@
 #
 # Written by Joep van Delft, 2014
 #
-# TODO: o Put a left margin for rst output. 
+# TODO: x Put a left margin for rst output. 
 #       o Move default values and possible values to the library. 
 #       o Think of a more readable way to register the options. 
 #       o Provide for a way to include a header from the command line
 #         as a string.
 #       o Improve usage() in nregopt. 
 #       o Write documentation. 
+#       - Strict mode. For when column count is not always the same.
 #       - Sort data after a key (and preserve the header), or decide
 #         that that is the domain of other tools.
-#       - Include a title option
+#       - Include a title option that describes the whole table. 
 #       - Make more styles available. 
 #       - Line wrapping. Maximum widths. 
 #
@@ -32,6 +33,7 @@ BEGIN {
     regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
     regopt("short=H; long=no-header; flag=header; has_arg=no; desc=Disable header")
+    regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
 
     parseopt(opt)
 
@@ -62,15 +64,15 @@ BEGIN {
 # tuple. They are called as indirect functions, where the function name is 
 # generated from variables. 
 
-function psql_head(p, tmp){split("┌─┬┐", tmp, "");return tmp[p]}
-function psql_sep(p,  tmp){split("├─┼┤", tmp, "");return tmp[p]}
-function psql_row(p,  tmp){split("│ ││", tmp, "");return tmp[p]}
-function psql_foot(p, tmp){split("└─┴┘", tmp, "");return tmp[p]}
+function psql_head(p, t){split("┌─┬┐", t, "");return t[p]}
+function psql_sep(p,  t){split("├─┼┤", t, "");return t[p]}
+function psql_row(p,  t){split("│ ││", t, "");return t[p]}
+function psql_foot(p, t){split("└─┴┘", t, "");return t[p]}
 
-function rst_head(p,  tmp){split("+-++", tmp, "");return p==1?"    "tmp[p]:tmp[p]}
-function rst_sep(p,   tmp){split("+=++", tmp, "");return p==1?"    "tmp[p]:tmp[p]}
-function rst_row(p,   tmp){split("| ||", tmp, "");return p==1?"    "tmp[p]:tmp[p]}
-function rst_foot(p,  tmp){split("+-++", tmp, "");return p==1?"    "tmp[p]:tmp[p]}
+function rst_head(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
+function rst_sep(p,   t){split("+=++", t, "");return p==1?"    "t[p]:t[p]}
+function rst_row(p,   t){split("| ||", t, "");return p==1?"    "t[p]:t[p]}
+function rst_foot(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
 
 function max(x, y) {
     return x>y?x:y
