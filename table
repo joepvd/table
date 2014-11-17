@@ -25,7 +25,6 @@ BEGIN {
 
     if (help == "yes") {
         usage()
-        #_assert_exit = 1
         exit 0
     }
 
@@ -124,15 +123,15 @@ function styler(contents,                   i, j, empty) {
 }
 
 END {
-    if (debug=="yes")
-        for (i in contents)
-            for (j in contents[i])
-                print i, j, contents[i][j] >"/dev/stderr"
     row_count = length(contents)
     colsize(contents)
-    if (debug == "yes") {
+    if (debug=="yes") {
         printf("Dimension of table: [%s x %s] ([rows x columns])\n",
                row_count, col_count) >"/dev/stderr"
+        for (i in contents)
+            for (j in contents[i])
+                printf("table: contents[%s][%s]=%s\n",
+                       i, j, contents[i][j]) >"/dev/stderr"
     }
     styler(contents)
 }
