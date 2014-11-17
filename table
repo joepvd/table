@@ -4,10 +4,11 @@
 
 BEGIN {
     #opt_debug="y"
-    regopt("short=s; name=style;flag=style;has_arg=yes;desc=Select output style.")
-    regopt("short=d; name=debug;flag=debug;has_arg=no; desc=Output debugging stuff")
-    regopt("short=h; name=help; flag=help; has_arg=no; desc=Show usage information")
-    regopt("short=F; name=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
+    regopt("short=s; long=style;flag=style;has_arg=yes;desc=Select output style.")
+    regopt("short=d; long=debug;flag=debug;has_arg=no; desc=Output debugging stuff")
+    regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
+    regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
+    regopt("short=H; long=no-header; flag=header; has_arg=no; desc=Disable header")
 
     parseopt(opt)
 
@@ -96,7 +97,7 @@ function styler(contents,                   i, j, empty) {
     for (j=1; j<=col_count; j++) 
         empty[j] = ""
     for (i=1; i<=row_count; i++) {
-        if (i==1)
+        if (i == 1)
             format_line(empty, "head")
         if (style=="rst" && i>2)
             format_line(empty, "foot") # Semantic bug
