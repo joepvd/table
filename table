@@ -34,6 +34,9 @@ BEGIN {
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
     regopt("short=H; long=no-header; flag=header; has_arg=no; desc=Disable header")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
+    regopt("long=rst;flag=style;  val=rst;has_arg=no;desc=Style ReStructuredText")
+    regopt("long=psql;flag=style; val=psql;has_arg=no;desc=Style ReStructuredText")
+
 
     parseopt(opt)
 
