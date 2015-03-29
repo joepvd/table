@@ -6,9 +6,9 @@ table
 display text in a table
 -----------------------
 
-:Author: mekanik@xs4all.nl
+:Author: joepvd
 :Date: 2015-03-29
-:Copyright: Public Domain
+:Copyright: GPLv2
 :Version: 0.1
 :Manual section: 1
 :Manual group: Text processing
@@ -53,5 +53,10 @@ DESCRIPTION
 DEPENDENCIES
 ============
 
-``table`` depends on the ``gawk`` command line option processing library ``ngetopt``.  
+``table`` depends on the ``gawk`` command line option processing library ``ngetopt.awk``, available from https://github.com/joepvd/ngetopt.awk.
 
+
+BUGS
+====
+
+Please send a pull request or open a ticket on https://github.com/joepvd/table. 
