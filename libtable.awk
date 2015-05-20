@@ -26,7 +26,7 @@
 
 @include "walkarray"
 
-function table_init() {
+function _table_init() {
     #opt_debug="y"
     
     if (style == "") { style = "psql" }
@@ -88,24 +88,19 @@ function pad(string, width, padchar,        _s) {
     return _s padchar
 }
 
-function colsize(contents,                  i,j,_len,m) {    
-    # Establishing the maximum size of the column contents, 
-    # store as a list in contents["len"]: 
-    for (j=1; j<=contents["col_count"]; j++) {
-        _len = 0
-        for (i=1; i<=contents["row_count"]; i++)
-            _len = max( _len, length(contents[i][j]) )
-        contents["len"][j] = _len
-    }
-    if (debug == "yes") {
-        printf "contents[\"len\"]: [%s", contents["len"][1]
-        for (m=2; m<=length(contents["len"]); m++)
-            printf ", %s", contents["len"][m]
-        print "]"
+function _table_analyze(contents,        row, col) {
+    contents["row_count"] = length(contents)
+    for (row=1; row in contents; row++) {
+        contents["col_count"] = max(contents["col_count"],
+                                    length(contents[row]))
+        for (col=1; col in contents[row]; col++) {
+            contents["len"][col] = max(contents["len"][col],
+                                       length(contents[row][col]))
+        }
     }
 }
 
-function styler(contents,                i, j, empty) {
+function _table_styler(contents,                i, j, empty) {
     for (j=1; j<=contents["col_count"]; j++) 
         empty[j] = ""
     for (i=1; i<=contents["row_count"]; i++) {
@@ -123,25 +118,15 @@ function styler(contents,                i, j, empty) {
 
 function make_table(contents, debug,      i,j) {
     if (! isarray(contents)) {
-        printf "libtable: Need to receive an array with contents to the function `make_table()'\nExiting.\n"
+        printf "libtable: Need to receive an array with contents to" >"/dev/stderr"
+        printf "function `make_table()'\nExiting.\n"
         exit 1
     }
-    table_init()
-    contents["row_count"] = length(contents) - 1    # Dirty hack for demanding "col_count" as part of the array
-                                                    # Needs to be a library function. 
-    colsize(contents)
+    _table_init()
+    _table_analyze(contents)
     if (debug=="yes") {
-        printf("Dimension of table: [%s x %s] ([rows x columns])\n",
-               contents["row_count"], contents["col_count"]) >"/dev/stderr"
-        for (i in contents) {
-            if (i ~ /^(len|row_count|col_count)$/)
-                continue
-            for (j in contents[i]) {
-                printf("table: contents[%s][%s]=%s\n",
-                       i, j, contents[i][j]) >"/dev/stderr"
-            }
-        }
+        walk_array(contents, "libtable: contents")
     }
-    styler(contents)
+    _table_styler(contents)
 }
 
