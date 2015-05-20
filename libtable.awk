@@ -26,8 +26,7 @@
 
 @include "walkarray"
 
-function _table_init() {
-    #opt_debug="y"
+function _table_init(                              permissible_styles) {
     
     if (style == "") { style = "psql" }
     permissible_styles["psql"]
@@ -51,34 +50,34 @@ function _table_init() {
 # tuple. They are called as indirect functions, where the function name is 
 # generated from variables. 
 
-function psql_head(p, t){split("┌─┬┐", t, "");return t[p]}
-function psql_sep(p,  t){split("├─┼┤", t, "");return t[p]}
-function psql_row(p,  t){split("│ ││", t, "");return t[p]}
-function psql_foot(p, t){split("└─┴┘", t, "");return t[p]}
+function _table_psql_head(p, t){split("┌─┬┐", t, "");return t[p]}
+function _table_psql_sep(p,  t){split("├─┼┤", t, "");return t[p]}
+function _table_psql_row(p,  t){split("│ ││", t, "");return t[p]}
+function _table_psql_foot(p, t){split("└─┴┘", t, "");return t[p]}
 
-function rst_head(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
-function rst_sep(p,   t){split("+=++", t, "");return p==1?"    "t[p]:t[p]}
-function rst_row(p,   t){split("| ||", t, "");return p==1?"    "t[p]:t[p]}
-function rst_foot(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
+function _table_rst_head(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
+function _table_rst_sep(p,   t){split("+=++", t, "");return p==1?"    "t[p]:t[p]}
+function _table_rst_row(p,   t){split("| ||", t, "");return p==1?"    "t[p]:t[p]}
+function _table_rst_foot(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
 
 function max(x, y) {
     return x>y?x:y
 }
 
 function format_line(line, role, contents,            glyph, i, cell) {
-    glyph = style"_"role
-    cell = pad(line[1], contents["len"][1], @glyph(fill))
+    glyph = "_table_"style"_"role
+    cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
     printf "%s%s", @glyph(left), cell
     for(i=2; i<=contents["col_count"]; i++) {
-        cell = pad(line[i], contents["len"][i], @glyph(fill))
+        cell = _table_pad(line[i], contents["len"][i], @glyph(fill))
         printf "%s%s", @glyph(middle), cell
     }
     printf "%s\n", @glyph(right)
 }
 
-function pad(string, width, padchar,        _s) {
+function _table_pad(string, width, padchar,        _s) {
     # put character `padchar` around `string` so the result is `width + 2` long. 
-    # `width + 2`, because there should always be a pad char to the left and to the 
+    # `width + 2`, because there should always be a _table_padchar to the left and to the 
     # right. 
     if ( length(string) > width )
         string = substr(string, 1, width)
@@ -120,6 +119,7 @@ function make_table(contents, debug,      i,j) {
     if (! isarray(contents)) {
         printf "libtable: Need to receive an array with contents to" >"/dev/stderr"
         printf "function `make_table()'\nExiting.\n"
+        _assert_exit = 1
         exit 1
     }
     _table_init()
@@ -130,3 +130,8 @@ function make_table(contents, debug,      i,j) {
     _table_styler(contents)
 }
 
+
+END {
+    if (_assert_exit)
+        exit 1
+}
