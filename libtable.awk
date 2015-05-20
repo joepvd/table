@@ -9,11 +9,8 @@
 # Written by Joep van Delft, 2014
 #
 # TODO: x Put a left margin for rst output. 
-#       o Move default values and possible values to the library. 
-#       o Think of a more readable way to register the options. 
 #       o Provide for a way to include a header from the command line
 #         as a string.
-#       o Improve usage() in nregopt. 
 #       o Write documentation. 
 #       - Strict mode. For when column count is not always the same.
 #       - Sort data after a key (and preserve the header), or decide
@@ -21,17 +18,13 @@
 #       - Include a title option that describes the whole table. 
 #       - Make more styles available. 
 #       - Line wrapping. Maximum widths. 
-#
-# Marked with `o` are to be done before the first release. 
 
 @include "walkarray"
 
 function _table_init(                              permissible_styles) {
-    
     if (style == "") { style = "psql" }
     permissible_styles["psql"]
     permissible_styles["rst"]
-
 
     if (! (style in permissible_styles)){
         printf("The selected style <%s> does not exist. Exiting\n",
@@ -60,11 +53,11 @@ function _table_rst_sep(p,   t){split("+=++", t, "");return p==1?"    "t[p]:t[p]
 function _table_rst_row(p,   t){split("| ||", t, "");return p==1?"    "t[p]:t[p]}
 function _table_rst_foot(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
 
-function max(x, y) {
+function _table_max(x, y) {
     return x>y?x:y
 }
 
-function format_line(line, role, contents,            glyph, i, cell) {
+function _table_format_line(line, role, contents,            glyph, i, cell) {
     glyph = "_table_"style"_"role
     cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
     printf "%s%s", @glyph(left), cell
@@ -90,10 +83,10 @@ function _table_pad(string, width, padchar,        _s) {
 function _table_analyze(contents,        row, col) {
     contents["row_count"] = length(contents)
     for (row=1; row in contents; row++) {
-        contents["col_count"] = max(contents["col_count"],
+        contents["col_count"] = _table_max(contents["col_count"],
                                     length(contents[row]))
         for (col=1; col in contents[row]; col++) {
-            contents["len"][col] = max(contents["len"][col],
+            contents["len"][col] = _table_max(contents["len"][col],
                                        length(contents[row][col]))
         }
     }
@@ -104,14 +97,14 @@ function _table_styler(contents,                i, j, empty) {
         empty[j] = ""
     for (i=1; i<=contents["row_count"]; i++) {
         if (i == 1)
-            format_line(empty, "head", contents)
+            _table_format_line(empty, "head", contents)
         if (style=="rst" && i>2)
-            format_line(empty, "foot", contents) # Semantic bug
-        format_line(contents[i], "row", contents)
+            _table_format_line(empty, "foot", contents) # Semantic bug
+        _table_format_line(contents[i], "row", contents)
         if (i==1 && header~/^(y|)$/)
-            format_line(empty, "sep", contents)
+            _table_format_line(empty, "sep", contents)
         if (i==contents["row_count"])
-            format_line(empty, "foot", contents)
+            _table_format_line(empty, "foot", contents)
     }
 }
 
@@ -129,7 +122,6 @@ function make_table(contents, debug,      i,j) {
     }
     _table_styler(contents)
 }
-
 
 END {
     if (_assert_exit)
