@@ -25,7 +25,7 @@
 # Marked with `o` are to be done before the first release. 
 
 @include "ngetopt.awk"
-@include "../libtable.awk"
+@include "libtable.awk"
 
 BEGIN {
     #opt_debug="y"
