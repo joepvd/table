@@ -126,6 +126,7 @@ function make_table(contents, debug,      i,j) {
         printf "libtable: Need to receive an array with contents to the function `make_table()'\nExiting.\n"
         exit 1
     }
+    table_init()
     contents["row_count"] = length(contents) - 1    # Dirty hack for demanding "col_count" as part of the array
                                                     # Needs to be a library function. 
     colsize(contents)

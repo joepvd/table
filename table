@@ -45,7 +45,6 @@ BEGIN {
         exit 0
     }
 
-    table_init()
 }
 
 # The following functions return the glyph for a certain style, role and place
