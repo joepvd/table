@@ -4,56 +4,38 @@
 # powered by all the field splitting magic that awk provides. Type
 # `table --help` for usage details. 
 #
+# This is a user interface for the libtable.awk library, which can be
+# used from other programs. 
+#
 # Depends on ngetopt.awk for command line option parsing. 
 #
 # Written by Joep van Delft, 2014
-#
-# TODO: x Put a left margin for rst output. 
-#       o Move default values and possible values to the library. 
-#       o Think of a more readable way to register the options. 
-#       o Provide for a way to include a header from the command line
-#         as a string.
-#       o Improve usage() in nregopt. 
-#       o Write documentation. 
-#       - Strict mode. For when column count is not always the same.
-#       - Sort data after a key (and preserve the header), or decide
-#         that that is the domain of other tools.
-#       - Include a title option that describes the whole table. 
-#       - Make more styles available. 
-#       - Line wrapping. Maximum widths. 
-#
-# Marked with `o` are to be done before the first release. 
 
 @include "ngetopt.awk"
 @include "libtable.awk"
 
 BEGIN {
     #opt_debug="y"
-    regopt("short=s; long=style;flag=style;has_arg=yes;desc=Select output style.")
-    regopt("short=d; long=debug;flag=debug;has_arg=no; desc=Output debugging stuff")
+    regopt("short=s; long=style; flag=style; has_arg=yes; desc=Select output style.")
+    regopt("short=d; long=debug; flag=debug; has_arg=no; desc=Output debugging stuff")
     regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
     regopt("short=H; long=no-header; flag=header; has_arg=no; desc=Disable header")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
-    regopt("long=rst;flag=style;  val=rst;has_arg=no;desc=Style ReStructuredText")
-    regopt("long=psql;flag=style; val=psql;has_arg=no;desc=Style ReStructuredText")
+    regopt("long=rst; flag=style; val=rst; has_arg=no; desc=Style ReStructuredText")
+    regopt("long=psql; flag=style; val=psql; has_arg=no; desc=Style ReStructuredText")
 
     parseopt(opt)
 
     if (help == "yes") {
         usage()
-        exit 0
+        _assert_exit = 0
+        exit
     }
-
 }
 
-# The following functions return the glyph for a certain style, role and place
-# tuple. They are called as indirect functions, where the function name is 
-# generated from variables. 
-
-
 {
-    # Storing the records in a two-dimensional array contents. 
+    # Storing the records in a two-dimensional array `contents'. 
     # Unfortunately, the following does not work: 
     #
     # % awk '{split($0, t[NR])}' <<<"a bbbb cccccccc"
@@ -61,11 +43,11 @@ BEGIN {
 
     split($0, tmp)
     for (i=1; i<=length(tmp); i++)
-        niceness[NR][i] = tmp[i]
+        contents[NR][i] = tmp[i]
     delete tmp
 }
 
 END {
-    make_table(niceness)
+    printf make_table(contents)
 }
 

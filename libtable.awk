@@ -1,12 +1,12 @@
-#!/usr/bin/gawk -E
+# gawk library to generate good looking tables from text data, 
 #
-# A small program to generate good looking tables from text data, 
-# powered by all the field splitting magic that awk provides. Type
-# `table --help` for usage details. 
+# Comes with the `table' user command. 
 #
 # Depends on ngetopt.awk for command line option parsing. 
 #
-# Written by Joep van Delft, 2014
+# Written by Joep van Delft, 2014, 2015, 
+# 
+# https://joepvd.github.com/table
 #
 # TODO: x Put a left margin for rst output. 
 #       o Provide for a way to include a header from the command line
@@ -30,7 +30,7 @@ function _table_init(                              permissible_styles) {
         printf("The selected style <%s> does not exist. Exiting\n",
                style) >"/dev/stderr"
         _assert_exit = 1
-        exit 1
+        exit
     }
 
     # Some variable initialization for character retrieval. 
@@ -57,15 +57,15 @@ function _table_max(x, y) {
     return x>y?x:y
 }
 
-function _table_format_line(line, role, contents,            glyph, i, cell) {
+function _table_format_line(line, role, contents,            string, glyph, i, cell) {
     glyph = "_table_"style"_"role
     cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
-    printf "%s%s", @glyph(left), cell
+    string = @glyph(left) cell
     for(i=2; i<=contents["col_count"]; i++) {
         cell = _table_pad(line[i], contents["len"][i], @glyph(fill))
-        printf "%s%s", @glyph(middle), cell
+        string = string @glyph(middle) cell
     }
-    printf "%s\n", @glyph(right)
+    return string @glyph(right) "\n"
 }
 
 function _table_pad(string, width, padchar,        _s) {
@@ -81,7 +81,10 @@ function _table_pad(string, width, padchar,        _s) {
 }
 
 function _table_analyze(contents,        row, col) {
-    contents["row_count"] = length(contents)
+    # Adds some meta data to the array `contents'. 
+    if (! ("row_count" in contents)) {
+        contents["row_count"] = length(contents)
+    }
     for (row=1; row in contents; row++) {
         contents["col_count"] = _table_max(contents["col_count"],
                                     length(contents[row]))
@@ -92,20 +95,21 @@ function _table_analyze(contents,        row, col) {
     }
 }
 
-function _table_styler(contents,                i, j, empty) {
+function _table_styler(contents,                string, i, j, empty) {
     for (j=1; j<=contents["col_count"]; j++) 
         empty[j] = ""
     for (i=1; i<=contents["row_count"]; i++) {
         if (i == 1)
-            _table_format_line(empty, "head", contents)
+            string = string _table_format_line(empty, "head", contents)
         if (style=="rst" && i>2)
-            _table_format_line(empty, "foot", contents) # Semantic bug
-        _table_format_line(contents[i], "row", contents)
+            string = string _table_format_line(empty, "foot", contents) # Semantic bug
+        string = string _table_format_line(contents[i], "row", contents)
         if (i==1 && header~/^(y|)$/)
-            _table_format_line(empty, "sep", contents)
+            string = string _table_format_line(empty, "sep", contents)
         if (i==contents["row_count"])
-            _table_format_line(empty, "foot", contents)
+            string = string _table_format_line(empty, "foot", contents)
     }
+    return string
 }
 
 function make_table(contents, debug,      i,j) {
@@ -113,17 +117,17 @@ function make_table(contents, debug,      i,j) {
         printf "libtable: Need to receive an array with contents to" >"/dev/stderr"
         printf "function `make_table()'\nExiting.\n"
         _assert_exit = 1
-        exit 1
+        exit
     }
     _table_init()
     _table_analyze(contents)
     if (debug=="yes") {
         walk_array(contents, "libtable: contents")
     }
-    _table_styler(contents)
+    return _table_styler(contents)
 }
 
 END {
-    if (_assert_exit)
-        exit 1
+    if (length(_assert_exit) > 0)
+        exit _assert_exit
 }
