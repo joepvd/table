@@ -48,7 +48,7 @@ OPTIONS
 DESCRIPTION
 ===========
 
-``table`` reads files on ``STDIN`` or from the command line, and tries to output a table in the terminal. Inspiration has been taken from the excellent capabilities of ``psql``, the default query tool of PostgreSQL.   
+``table`` reads files on ``STDIN`` or from the command line, and tries to output a table in the terminal. Inspiration has been taken from the excellent capabilities of ``psql``, the default query tool of PostgreSQL.
 
 DEPENDENCIES
 ============
@@ -60,3 +60,9 @@ BUGS
 ====
 
 Please send a pull request or open a ticket on https://github.com/joepvd/table. 
+
+
+SEE ALSO
+========
+
+``libtable(2)``

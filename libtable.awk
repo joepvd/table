@@ -7,17 +7,6 @@
 # Written by Joep van Delft, 2014, 2015, 
 # 
 # https://joepvd.github.com/table
-#
-# TODO: x Put a left margin for rst output. 
-#       o Provide for a way to include a header from the command line
-#         as a string.
-#       o Write documentation. 
-#       - Strict mode. For when column count is not always the same.
-#       - Sort data after a key (and preserve the header), or decide
-#         that that is the domain of other tools.
-#       - Include a title option that describes the whole table. 
-#       - Make more styles available. 
-#       - Line wrapping. Maximum widths. 
 
 @include "walkarray"
 
