@@ -9,7 +9,7 @@
 #
 # Depends on ngetopt.awk for command line option parsing. 
 #
-# Written by Joep van Delft, 2014
+# Written by Joep van Delft, 2014, 2015
 
 @include "ngetopt.awk"
 @include "libtable.awk"
@@ -36,15 +36,11 @@ BEGIN {
 
 {
     # Storing the records in a two-dimensional array `contents'. 
-    # Unfortunately, the following does not work: 
-    #
-    # % awk '{split($0, t[NR])}' <<<"a bbbb cccccccc"
-    # awk: cmd. line:1: (FILENAME=- FNR=1) fatal: split: second argument is not an array
-
-    split($0, tmp)
-    for (i=1; i<=length(tmp); i++)
-        contents[NR][i] = tmp[i]
-    delete tmp
+    # Some silly trick to convince `split' that `contents[NR]' really
+    # is an array. 
+    contents[NR]["a"]=1
+    split($0, contents[NR])
+    delete contents[NR]["a"]
 }
 
 END {
