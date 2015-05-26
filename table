@@ -32,15 +32,20 @@ BEGIN {
         _assert_exit = 0
         exit
     }
+    offset = 0
 }
 
 {
     # Storing the records in a two-dimensional array `contents'. 
     # Some silly trick to convince `split' that `contents[NR]' really
     # is an array. 
-    contents[NR]["a"]=1
-    split($0, contents[NR])
-    delete contents[NR]["a"]
+    if (NF == 0) {
+        offset++
+        next
+    }
+    contents[NR - offset]["a"]=1
+    split($0, contents[NR - offset])
+    delete contents[NR - offset]["a"]
 }
 
 END {

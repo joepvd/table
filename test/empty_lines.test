@@ -1,0 +1,8 @@
+../table <<EOF
+
+aa aaaa
+bbb bbbbbbbbbbbb
+
+cc ccccccc
+
+EOF
