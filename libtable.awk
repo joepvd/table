@@ -1,8 +1,8 @@
-# gawk library to generate good looking tables from text data, 
+# libtable.awk
 #
-# Comes with the `table' user command. 
-#
-# Depends on ngetopt.awk for command line option parsing. 
+# gawk library to generate good looking tables from text data, Comes 
+# with the `table' user command. Depends on ngetopt.awk for command 
+# line option parsing. 
 #
 # Written by Joep van Delft, 2014, 2015, 
 # 
@@ -10,27 +10,13 @@
 
 @include "walkarray"
 
-function _table_init(                              permissible_styles) {
-    if (style == "") { style = "psql" }
-    permissible_styles["psql"]
-    permissible_styles["rst"]
-
-    if (! (style in permissible_styles)){
-        printf("The selected style <%s> does not exist. Exiting\n",
-               style) >"/dev/stderr"
-        _assert_exit = 1
-        exit
-    }
-
+BEGIN {
     # Some variable initialization for character retrieval. 
     left=1; fill=2; middle=3; right=4;
-
-    if (1 in contents) {} # Voila: contents is an array now.
 }
 
 # The following functions return the glyph for a certain style, role and place
-# tuple. They are called as indirect functions, where the function name is 
-# generated from variables. 
+# tuple. 
 
 function _table_psql_head(p, t){split("┌─┬┐", t, "");return t[p]}
 function _table_psql_sep(p,  t){split("├─┼┤", t, "");return t[p]}
@@ -58,9 +44,6 @@ function _table_format_line(line, role, contents,            string, glyph, i, c
 }
 
 function _table_pad(string, width, padchar,        _s) {
-    # put character `padchar` around `string` so the result is `width + 2` long. 
-    # `width + 2`, because there should always be a _table_padchar to the left and to the 
-    # right. 
     if ( length(string) > width )
         string = substr(string, 1, width)
     _s = padchar string
@@ -70,6 +53,17 @@ function _table_pad(string, width, padchar,        _s) {
 }
 
 function _table_analyze(contents,        row, col) {
+    if (style == "") { style = "psql" }
+    permissible_styles["psql"]
+    permissible_styles["rst"]
+
+    if (! (style in permissible_styles)){
+        printf("The selected style <%s> does not exist. Exiting\n",
+               style) >"/dev/stderr"
+        _assert_exit = 1
+        exit
+    }
+
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {
         contents["row_count"] = length(contents)
@@ -108,7 +102,6 @@ function make_table(contents, debug,      i,j) {
         _assert_exit = 1
         exit
     }
-    _table_init()
     _table_analyze(contents)
     if (debug=="yes") {
         walk_array(contents, "libtable: contents")
