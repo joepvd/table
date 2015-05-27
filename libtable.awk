@@ -54,15 +54,6 @@ function _table_pad(string, width, padchar,        _s) {
 
 function _table_analyze(contents,        row, col) {
     if (style == "") { style = "psql" }
-    permissible_styles["psql"]
-    permissible_styles["rst"]
-
-    if (! (style in permissible_styles)){
-        printf("The selected style <%s> does not exist. Exiting\n",
-               style) >"/dev/stderr"
-        _assert_exit = 1
-        exit
-    }
 
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {

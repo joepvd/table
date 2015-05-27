@@ -16,7 +16,7 @@
 
 BEGIN {
     #opt_debug="y"
-    regopt("short=s; long=style; flag=style; has_arg=yes; desc=Select output style.")
+    regopt("short=s; long=style; flag=style; has_arg=yes; vals=rst|psql; desc=Select output style.")
     regopt("short=d; long=debug; flag=debug; has_arg=no; desc=Output debugging stuff")
     regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
