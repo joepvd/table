@@ -11,8 +11,6 @@
 # https://joepvd.github.com/table
 
 BEGIN {
-    # Some variable initialization for character retrieval. 
-    left=1; fill=2; middle=3; right=4;
 }
 
 # The following functions return the glyph for a certain style, role and place
@@ -79,7 +77,11 @@ function _table_styler(contents,                string, i, j, empty) {
     return string
 }
 
-function _table_format_line(line, role, contents,            string, glyph, i, cell) {
+function _table_format_line(line, role, contents,            
+                    string, glyph, i, cell, 
+                    left, fill, middle, right) {
+    # Variable initialization for character retrieval:
+    left=1; fill=2; middle=3; right=4;
     glyph = "_table_"style"_"role
     cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
     string = @glyph(left) cell
