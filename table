@@ -11,8 +11,9 @@
 #
 # Written by Joep van Delft, 2014, 2015
 
-@include "ngetopt.awk"
-@include "libtable.awk"
+@include "ngetopt"
+@include "libtable"
+@include "walkarray"
 
 BEGIN {
     #opt_debug="y"
@@ -50,5 +51,7 @@ BEGIN {
 
 END {
     printf make_table(contents)
+    if (debug == "yes")
+        walk_array(contents, "contents")
 }
 

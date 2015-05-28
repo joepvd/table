@@ -4,11 +4,11 @@
 # with the `table' user command. Depends on ngetopt.awk for command 
 # line option parsing. 
 #
-# Written by Joep van Delft, 2014, 2015, 
+# Written by Joep van Delft, 2014, 2015.
+#
+# Released under GPLv2, see LICENSE.
 # 
 # https://joepvd.github.com/table
-
-@include "walkarray"
 
 BEGIN {
     # Some variable initialization for character retrieval. 
@@ -32,24 +32,17 @@ function _table_max(x, y) {
     return x>y?x:y
 }
 
-function _table_format_line(line, role, contents,            string, glyph, i, cell) {
-    glyph = "_table_"style"_"role
-    cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
-    string = @glyph(left) cell
-    for(i=2; i<=contents["col_count"]; i++) {
-        cell = _table_pad(line[i], contents["len"][i], @glyph(fill))
-        string = string @glyph(middle) cell
+function make_table(contents,       i,j) {
+    # The only user entry point for this library.  Takes one array as argument. 
+    # Returns a string containing the whole table. 
+    if (! isarray(contents)) {
+        printf "libtable: Need to receive an array with contents to" >"/dev/stderr"
+        printf "function `make_table()'\nExiting.\n"
+        _assert_exit = 1
+        exit
     }
-    return string @glyph(right) "\n"
-}
-
-function _table_pad(string, width, padchar,        _s) {
-    if ( length(string) > width )
-        string = substr(string, 1, width)
-    _s = padchar string
-    while ( length(_s) <= width )
-        _s = _s padchar
-    return _s padchar
+    _table_analyze(contents)
+    return _table_styler(contents)
 }
 
 function _table_analyze(contents,        row, col) {
@@ -86,18 +79,24 @@ function _table_styler(contents,                string, i, j, empty) {
     return string
 }
 
-function make_table(contents, debug,      i,j) {
-    if (! isarray(contents)) {
-        printf "libtable: Need to receive an array with contents to" >"/dev/stderr"
-        printf "function `make_table()'\nExiting.\n"
-        _assert_exit = 1
-        exit
+function _table_format_line(line, role, contents,            string, glyph, i, cell) {
+    glyph = "_table_"style"_"role
+    cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
+    string = @glyph(left) cell
+    for(i=2; i<=contents["col_count"]; i++) {
+        cell = _table_pad(line[i], contents["len"][i], @glyph(fill))
+        string = string @glyph(middle) cell
     }
-    _table_analyze(contents)
-    if (debug=="yes") {
-        walk_array(contents, "libtable: contents")
-    }
-    return _table_styler(contents)
+    return string @glyph(right) "\n"
+}
+
+function _table_pad(string, width, padchar,        _s) {
+    if ( length(string) > width )
+        string = substr(string, 1, width)
+    _s = padchar string
+    while ( length(_s) <= width )
+        _s = _s padchar
+    return _s padchar
 }
 
 END {
