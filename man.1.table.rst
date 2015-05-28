@@ -17,8 +17,13 @@ SYNOPSIS
 ========
 
 
-table [-h|--help] [-F|--field-separator] [-H|--no-header] [-d|--debug]
+table [-h|--help] [-F|--field-separator] [-R|--record-separator] [-H|--no-header] [-d|--debug]
 [-s|--style [rst|psql]|--rst|psql] [files]
+
+DESCRIPTION
+===========
+
+``table`` takes text as fields and records and transforms it as a table.  Inspiration has been taken from the excellent capabilities of ``psql``, the default query tool of PostgreSQL.  Output can be as a ``reStructuredText``-table or with unicode line characters.  Field and record splitting, the facilities of ``awk`` are enabled.  
 
 
 OPTIONS
@@ -39,21 +44,19 @@ OPTIONS
 -F|--field-separator
     Equivalent to ``awk``. Set the field separator. Default is ``[ \t\n]+``. Example: ``-F,`` separates on comma's. 
 
+-R|--record-separator
+    Set the record separator for input files.
+
 -H|--no-header
     Do not consider the first line of input as the table header. 
 
 -d|--debug
     Output debugging info.
 
-DESCRIPTION
-===========
-
-``table`` reads files on ``STDIN`` or from the command line, and tries to output a table in the terminal. Inspiration has been taken from the excellent capabilities of ``psql``, the default query tool of PostgreSQL.
-
 DEPENDENCIES
 ============
 
-``table`` depends on the ``gawk`` command line option processing library ``ngetopt.awk``, available from https://github.com/joepvd/ngetopt.awk.
+``table`` depends on the ``gawk`` version 4 or newer, and the command line option processing library ``ngetopt.awk``, available from https://github.com/joepvd/ngetopt.awk.
 
 
 BUGS

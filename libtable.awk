@@ -50,6 +50,7 @@ function _table_analyze(contents,        row, col) {
     if (! ("row_count" in contents)) {
         contents["row_count"] = length(contents)
     }
+    # Warning: O(n^2)
     for (row=1; row in contents; row++) {
         contents["col_count"] = _table_max(contents["col_count"],
                                     length(contents[row]))
@@ -82,12 +83,19 @@ function _table_format_line(line, role, contents,
                     left, fill, middle, right) {
     # Variable initialization for character retrieval:
     left=1; fill=2; middle=3; right=4;
+
     glyph = "_table_"style"_"role
-    cell = _table_pad(line[1], contents["len"][1], @glyph(fill))
-    string = @glyph(left) cell
-    for(i=2; i<=contents["col_count"]; i++) {
-        cell = _table_pad(line[i], contents["len"][i], @glyph(fill))
-        string = string @glyph(middle) cell
+
+    # And construct string:
+    for(i=1; i<=contents["col_count"]; i++) {
+        cell = line[i]
+        # For funny record separators and implicit newlines:
+        sub(/[\r\n]+$/, "", cell)
+        cell = _table_pad(cell, contents["len"][i], @glyph(fill))
+        if (i == 1) 
+            string = @glyph(left) cell
+        else
+            string = string @glyph(middle) cell
     }
     return string @glyph(right) "\n"
 }
