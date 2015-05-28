@@ -3,7 +3,7 @@ table
 =====
 
 -----------------------
-display text in a table
+Display text in a table
 -----------------------
 
 :Author: joepvd
