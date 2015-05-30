@@ -26,6 +26,7 @@ BEGIN {
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
     regopt("long=rst; flag=style; val=rst; has_arg=no; desc=Style ReStructuredText")
     regopt("long=psql; flag=style; val=psql; has_arg=no; desc=Style ReStructuredText")
+    regopt("long=left-margin; flag=_table_left_margin; has_arg=yes; desc=Sets the left margin")
 
     parseopt(opt)
 
@@ -39,12 +40,13 @@ BEGIN {
 
 {
     # Storing the records in a two-dimensional array `contents'. 
-    # Some silly trick to convince `split' that `contents[NR]' really
-    # is an array. 
+    # Ignore empty lines, while respecting the demand for consecutive indexes: 
     if (NF == 0) {
         offset++
         next
     }
+    # Some silly trick to convince `split' that `contents[NR]' really
+    # is an array. 
     contents[NR - offset]["a"]=1
     split($0, contents[NR - offset])
     delete contents[NR - offset]["a"]

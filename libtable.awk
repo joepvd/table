@@ -21,10 +21,10 @@ function _table_psql_sep(p,  t){split("├─┼┤", t, "");return t[p]}
 function _table_psql_row(p,  t){split("│ ││", t, "");return t[p]}
 function _table_psql_foot(p, t){split("└─┴┘", t, "");return t[p]}
 
-function _table_rst_head(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
-function _table_rst_sep(p,   t){split("+=++", t, "");return p==1?"    "t[p]:t[p]}
-function _table_rst_row(p,   t){split("| ||", t, "");return p==1?"    "t[p]:t[p]}
-function _table_rst_foot(p,  t){split("+-++", t, "");return p==1?"    "t[p]:t[p]}
+function _table_rst_head(p,  t){split("+-++", t, "");return t[p]}
+function _table_rst_sep(p,   t){split("+=++", t, "");return t[p]}
+function _table_rst_row(p,   t){split("| ||", t, "");return t[p]}
+function _table_rst_foot(p,  t){split("+-++", t, "");return t[p]}
 
 function _table_max(x, y) {
     return x>y?x:y
@@ -45,6 +45,7 @@ function make_table(contents,       i,j) {
 
 function _table_analyze(contents,        row, col) {
     if (style == "") { style = "psql" }
+    if (style == "rst") { _table_left_margin = "    " }
 
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {
@@ -79,7 +80,7 @@ function _table_styler(contents,                string, i, j, empty) {
 }
 
 function _table_format_line(line, role, contents,            
-                    string, glyph, i, cell, 
+                    line_str, glyph, i, cell, 
                     left, fill, middle, right) {
     # Variable initialization for character retrieval:
     left=1; fill=2; middle=3; right=4;
@@ -87,17 +88,17 @@ function _table_format_line(line, role, contents,
     glyph = "_table_"style"_"role
 
     # And construct string:
-    for(i=1; i<=contents["col_count"]; i++) {
+    for (i=1; i<=contents["col_count"]; i++) {
         cell = line[i]
         # For funny record separators and implicit newlines:
         sub(/[\r\n]+$/, "", cell)
         cell = _table_pad(cell, contents["len"][i], @glyph(fill))
         if (i == 1) 
-            string = @glyph(left) cell
+            line_str = _table_left_margin @glyph(left) cell
         else
-            string = string @glyph(middle) cell
+            line_str = line_str @glyph(middle) cell
     }
-    return string @glyph(right) "\n"
+    return line_str @glyph(right) "\n"
 }
 
 function _table_pad(string, width, padchar,        _s) {

@@ -53,6 +53,9 @@ OPTIONS
 -d|--debug
     Output debugging info.
 
+--left-margin
+    Prepend the resulting table with an arbitrary string.  Handy for outlining. 
+
 DEPENDENCIES
 ============
 

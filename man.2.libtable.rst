@@ -40,4 +40,5 @@ debug
 header
     Default: Yes. Set to ``no`` to disable the header.
 
-
+_table_left_margin
+    String to prepend each table line with.
