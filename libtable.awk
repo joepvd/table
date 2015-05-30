@@ -67,7 +67,7 @@ function _table_styler(contents,                string, i, j, empty) {
     for (i=1; i<=contents["row_count"]; i++) {
         if (i == 1)
             string = string _table_format_line(empty, "head", contents)
-        if (style=="rst" && i>2)
+        if (style=="rst" && ( i>2 || i==2 && header == "no"))
             string = string _table_format_line(empty, "foot", contents) # Semantic bug
         string = string _table_format_line(contents[i], "row", contents)
         if (i==1 && header~/^(y|)$/)
