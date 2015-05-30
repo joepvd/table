@@ -11,23 +11,16 @@
 # https://joepvd.github.com/table
 
 BEGIN {
-}
+    # Define some arrays containing special characters. 
+    split("┌─┬┐", _table_psql_head, "")
+    split("├─┼┤", _table_psql_sep,  "")
+    split("│ ││", _table_psql_row,  "")
+    split("└─┴┘", _table_psql_foot, "")
 
-# The following functions return the glyph for a certain style, role and place
-# tuple. 
-
-function _table_psql_head(p, t){split("┌─┬┐", t, "");return t[p]}
-function _table_psql_sep(p,  t){split("├─┼┤", t, "");return t[p]}
-function _table_psql_row(p,  t){split("│ ││", t, "");return t[p]}
-function _table_psql_foot(p, t){split("└─┴┘", t, "");return t[p]}
-
-function _table_rst_head(p,  t){split("+-++", t, "");return t[p]}
-function _table_rst_sep(p,   t){split("+=++", t, "");return t[p]}
-function _table_rst_row(p,   t){split("| ||", t, "");return t[p]}
-function _table_rst_foot(p,  t){split("+-++", t, "");return t[p]}
-
-function _table_max(x, y) {
-    return x>y?x:y
+    split("+-++", _table_rst_head, "")
+    split("+=++", _table_rst_sep, "")
+    split("| ||", _table_rst_row, "")
+    split("+-++", _table_rst_foot, "")
 }
 
 function make_table(contents,       i,j) {
@@ -35,7 +28,7 @@ function make_table(contents,       i,j) {
     # Returns a string containing the whole table. 
     if (! isarray(contents)) {
         printf "libtable: Need to receive an array with contents to" >"/dev/stderr"
-        printf "function `make_table()'\nExiting.\n"
+        printf "function `make_table()'\nExiting.\n" >"/dev/stderr"
         _assert_exit = 1
         exit
     }
@@ -90,15 +83,15 @@ function _table_format_line(line, role, contents,
     # And construct string:
     for (i=1; i<=contents["col_count"]; i++) {
         cell = line[i]
-        # For funny record separators and implicit newlines:
+        # Remove trailing newlines (needed for `--rs`):
         sub(/[\r\n]+$/, "", cell)
-        cell = _table_pad(cell, contents["len"][i], @glyph(fill))
+        cell = _table_pad(cell, contents["len"][i], SYMTAB[glyph][fill])
         if (i == 1) 
-            line_str = _table_left_margin @glyph(left) cell
+            line_str = _table_left_margin SYMTAB[glyph][left] cell
         else
-            line_str = line_str @glyph(middle) cell
+            line_str = line_str SYMTAB[glyph][middle] cell
     }
-    return line_str @glyph(right) "\n"
+    return line_str SYMTAB[glyph][right] "\n"
 }
 
 function _table_pad(string, width, padchar,        _s) {
@@ -108,6 +101,10 @@ function _table_pad(string, width, padchar,        _s) {
     while ( length(_s) <= width )
         _s = _s padchar
     return _s padchar
+}
+
+function _table_max(x, y) {
+    return x>y?x:y
 }
 
 END {
