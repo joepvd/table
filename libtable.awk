@@ -10,19 +10,6 @@
 # 
 # https://joepvd.github.com/table
 
-BEGIN {
-    # Define some arrays containing special characters. 
-    split("┌─┬┐", _table_psql_head, "")
-    split("├─┼┤", _table_psql_sep,  "")
-    split("│ ││", _table_psql_row,  "")
-    split("└─┴┘", _table_psql_foot, "")
-
-    split("+-++", _table_rst_head, "")
-    split("+=++", _table_rst_sep, "")
-    split("| ||", _table_rst_row, "")
-    split("+-++", _table_rst_foot, "")
-}
-
 function make_table(contents,       i,j) {
     # The only user entry point for this library.  Takes one array as argument. 
     # Returns a string containing the whole table. 
@@ -37,8 +24,23 @@ function make_table(contents,       i,j) {
 }
 
 function _table_analyze(contents,        row, col) {
-    if (style == "") { style = "psql" }
-    if (style == "rst") { _table_left_margin = "    " }
+    if (style == "") 
+        style = "psql"
+    # Define some arrays containing special characters. 
+    if (style == "psql") {
+        split("┌─┬┐", _table_head, "")
+        split("├─┼┤", _table_sep,  "")
+        split("│ ││", _table_row,  "")
+        split("└─┴┘", _table_foot, "")
+    }
+    if (style == "rst") {
+        split("+-++", _table_head, "")
+        split("+=++", _table_sep,  "")
+        split("| ||", _table_row,  "")
+        split("+-++", _table_foot, "")
+        if (_table_left_margin == "")
+            _table_left_margin = "    " 
+    }
 
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {
@@ -78,7 +80,7 @@ function _table_format_line(line, role, contents,
     # Variable initialization for character retrieval:
     left=1; fill=2; middle=3; right=4;
 
-    glyph = "_table_"style"_"role
+    glyph = "_table_"role
 
     # And construct string:
     for (i=1; i<=contents["col_count"]; i++) {
