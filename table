@@ -24,8 +24,9 @@ BEGIN {
     regopt("short=R; long=record-separator; flag=RS; has_arg=yes; desc=Sets the record separator")
     regopt("short=H; long=no-header; flag=header; val=no; has_arg=no; desc=Disable header")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
-    regopt("long=rst; flag=style; val=rst; has_arg=no; desc=Style ReStructuredText")
-    regopt("long=psql; flag=style; val=psql; has_arg=no; desc=Style ReStructuredText")
+    regopt("short=T; long=title; flag=title; has_arg=yes; desc=Set argument as title")
+    regopt("long=rst; flag=style; val=rst; has_arg=no; desc=Style reStructuredText")
+    regopt("long=psql; flag=style; val=psql; has_arg=no; desc=Style Unicode psql")
     regopt("long=left-margin; flag=_table_left_margin; has_arg=yes; desc=Sets the left margin")
 
     parseopt(opt)
