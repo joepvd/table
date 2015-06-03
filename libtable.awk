@@ -33,19 +33,22 @@ function _table_analyze(contents,        row, col) {
         split("│ ││", _table_row,  "")
         split("└─┴┘", _table_foot, "")
     }
-    if (style == "psql" && title != "") {
-        split("┌──┐", _table_title, "")
-        split("├─┬┤", _table_head, "")
-    }
     if (style == "rst") {
         split("+=++", _table_title, "")
         split("+-++", _table_head, "")
         split("+=++", _table_sep,  "")
         split("| ||", _table_row,  "")
         split("+-++", _table_foot, "")
-        if (_table_left_margin == "")
-            _table_left_margin = "    " 
     }
+    if (style == "psql" && title != "") {
+        split("╒══╕", _table_title, "")
+        split("╞═╤╡", _table_head, "")
+    }
+    if (title != "" && style == "rst") {
+        split("+=++", _table_head, "")
+    }
+    if (style == "rst" && _table_left_margin == "")
+        _table_left_margin = "    " 
 
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {
@@ -69,12 +72,7 @@ function _table_styler(contents,                string, i, j, empty) {
         if (i == 1) {
             string = string _table_format_line(empty, "head", contents)
             if (title != "") {
-                total_width = length(string) - length(left_margin)
-                leftpad = sprintf("%i", (total_width - 4 - length(title)) / 2) + length(title)
-                rightpad = total_width - 3 - leftpad
-                table_title = sprintf("%s%s%s\n", _table_title[1], _table_pad("", total_width - 5, _table_title[2]), _table_title[4])
-                table_title = sprintf("%s%s %*s%*s\n", table_title, _table_row[1], leftpad, title, rightpad, _table_row[4])
-                string = table_title string
+                string = _table_make_title(title, contents["len"]) string
             }
         }
         if (style=="rst" && ( i>2 || i==2 && header == "no"))
@@ -86,6 +84,28 @@ function _table_styler(contents,                string, i, j, empty) {
             string = string _table_format_line(empty, "foot", contents)
     }
     return string
+}
+
+function _table_make_title(title, arr,
+                       i, s, _len) {
+    for (c in arr)
+        _len += arr[c]
+    _len = _len \
+           + 2 * ( length(_table_row[1]) + length(_table_row[4]) ) \
+           + 3 * ( length(arr) - 1 ) \
+           - 4
+    # the first line: 
+    s = _table_left_margin \
+        _table_title[1] \
+        _table_pad("", _len, _table_title[2]) \
+        _table_title[4] "\n"
+    # The second line: 
+    s = s \
+        _table_left_margin \
+        _table_row[1] \
+        _table_pad_center(title, _len, " ") \
+        _table_row[4] "\n"
+    return s
 }
 
 function _table_format_line(line, role, contents,            
@@ -110,12 +130,39 @@ function _table_format_line(line, role, contents,
     return line_str SYMTAB[glyph][right] "\n"
 }
 
-function _table_pad(string, width, padchar,        _s) {
+function _table_pad_left(string, width, padchar,        _s) {
     if ( length(string) > width )
         string = substr(string, 1, width)
     _s = padchar string
     while ( length(_s) <= width )
         _s = _s padchar
+    return _s padchar
+}
+
+function _table_pad(string, width, padchar) {
+    # Depreciated function. 
+    return _table_pad_left(string, width, padchar)
+}
+
+function _table_pad_right(string, width, padchar,     _s) {
+    if ( length(string) > width )
+        string = substr(string, 1, width)
+    _s = string padchar
+    while (length(_s) <= width)
+        _s = padchar _s
+    return padchar _s
+}
+
+function _table_pad_center(string, width, padchar,    _s) {
+    if ( length(string) > width )
+        string = substr(string, 1, width)
+    _s = padchar string
+    while (length(_s) <= width) {
+        if (length(_s)%2 == 0)
+            _s = _s padchar
+        else
+            _s = padchar _s
+    }
     return _s padchar
 }
 

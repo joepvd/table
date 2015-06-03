@@ -1,0 +1,1 @@
+../table --left-margin "> " --title "now or never" --rst data1.txt
