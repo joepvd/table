@@ -9,7 +9,7 @@ Display text in a table
 :Author: joepvd
 :Date: 2015-03-29
 :Copyright: GPLv2
-:Version: 0.1
+:Version: 0.2
 :Manual section: 1
 :Manual group: Text processing
 
@@ -49,6 +49,9 @@ OPTIONS
 
 -H|--no-header
     Do not consider the first line of input as the table header. 
+
+-T|--title
+    Set a title.  This string will be centered along the width of the whole table.
 
 -d|--debug
     Output debugging info.

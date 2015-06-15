@@ -11,7 +11,7 @@
 #
 # Written by Joep van Delft, 2014, 2015
 
-@include "ngetopt"
+@include "ngetopt.awk"
 @include "libtable"
 @include "walkarray"
 
@@ -32,7 +32,7 @@ BEGIN {
     parseopt(opt)
 
     if (help == "yes") {
-        usage()
+        print usage()
         _assert_exit = 0
         exit
     }

@@ -1,28 +1,59 @@
 table
 =====
 
+Facts become valuable if they are presented attractively.  Console junkies often need to take refuge to spreadsheet programs to display and present their findings to customers and managers.  ``table`` attempts to obliterate the need to interrupt the console workflow by presenting tabular data in a human digestible form.  
 
-Turn tabular data into a console worthy table.  Presented as a stand-alone program ``table``, and as a library to include in your own ``gawk`` programs.  
-
-Turn data like this: 
-
-.. code:: 
-
-   aa,bb,a567f456
-   a456,987897,9877878
-   987987,76mnb,gydg
-
-into: 
+Let the console speak for itself: 
 
 .. code::
 
-   niceness
+    % ps | table 
+    ┌─────┬───────┬──────────┬───────┐
+    │ PID │ TTY   │ TIME     │ CMD   │
+    ├─────┼───────┼──────────┼───────┤
+    │ 139 │ pts/3 │ 00:00:00 │ zsh   │
+    │ 219 │ pts/3 │ 00:00:00 │ ps    │
+    │ 220 │ pts/3 │ 00:00:00 │ table │
+    └─────┴───────┴──────────┴───────┘
 
-Full ``gawk``-sophistication is available to define the field separation.  
 
-The program ``table`` is a thin wrapper around the library.  
+``table`` receives input on `STDIN` or from file(s), and makes an attractive looking table from this.  A growing number of options and output numbers is supported.  As ``table`` is written in ``gawk`` version 4 or more recent, all goodies like regex support for field splitting are available.  Some highlights (consult `man 1 table` for for an extensive list): 
 
-The following **styles** are available; 
+--rst
+    Output a table for reStructuredText
+
+--title STRING
+    Set a centered title spanning all the columns.
+
+--field-separator
+    Define the AWK-field separator to be used. 
+
+--no-header
+    Do not display titles for columns.
+
+libtable.awk
+++++++++++++
+
+``table`` is a front end for the included ``gawk`` library ``libtable``.  This is of interest to ``gawk`` programmers, and allows an array to be passed to ``make_table``, after which a properly formatted table will be returned.
+
+As of yet, the library should be considered unstable.  The usage of global variables for configuration is conventient, yet wrong.  Attemps to make this nicer resulted in ugliness.  Suggestions are welcome. 
+
+Installation
+++++++++++++
+
+The ``table`` command depends on ``gawk`` version 4 or newer. And the command line processing library ngetopt.awk_.  
+
+.. _ngetopt.awk: https://github.com/joepvd/ngetopt.awk
+
+Make sure that ``libtable.awk`` and ``ngetopt.awk`` are in ``AWKPATH``.  On many distributions, this will be ``/usr/share/awk``. You can find out what ``AWKPATH`` is by executing ``gawk 'BEGIN{print ENVIRON["GAWKPATH"]}'``.
+
+
+Bugs
+++++
+
+Probably.  Pull requests or issues welcome over at GitHub_.
+
+.. _GitHub: https://github.com/joepvd/table
 
 
 
