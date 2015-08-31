@@ -45,7 +45,7 @@ The ``table`` command depends on ``gawk`` version 4 or newer. And the command li
 
 .. _ngetopt.awk: https://github.com/joepvd/ngetopt.awk
 
-Make sure that ``libtable.awk`` and ``ngetopt.awk`` are in ``AWKPATH``.  On many distributions, this will be ``/usr/share/awk``. You can find out what ``AWKPATH`` is by executing ``gawk 'BEGIN{print ENVIRON["GAWKPATH"]}'``.
+Make sure that ``libtable.awk`` and ``ngetopt.awk`` are in ``AWKPATH``.  On many distributions, this will be ``/usr/share/awk``, or ``/usr/local/share/awk`` (OS X). You can find out what ``AWKPATH`` is by executing ``gawk 'BEGIN{print ENVIRON["GAWKPATH"]}'``.
 
 
 Bugs
