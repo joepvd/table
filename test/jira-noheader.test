@@ -1,0 +1,1 @@
+../table --jira --no-header data1.txt

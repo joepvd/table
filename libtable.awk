@@ -59,6 +59,17 @@ function _table_analyze(contents,
         split("| ||", _table_row, "")
         split("^^^^", _table_foot, "") # ^ will be skipped
     }
+    if (style == "jira") {
+        split("^^^^", _table_title, "") # ^ will be skipped
+        split("^^^^", _table_head, "") # ^ will be skipped
+        split("||; ;||;||", _table_head_row, ";")
+        split("^^^^", _table_sep, "") # will be skipped
+        split("| ; ;| ; |", _table_row, ";")
+        if (header == "no") {
+            split("| ||", _table_row, "")
+        }
+        split("^^^^", _table_foot, "") # ^ will be skipped
+    }
 
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {
@@ -83,14 +94,22 @@ function _table_styler(contents,                string, i, j, empty) {
         empty[j] = ""
     for (i=1; i<=contents["row_count"]; i++) {
         if (i == 1) {
-            string = string _table_format_line(empty, "head", contents)
+            if (style != "jira") {
+                string = string _table_format_line(empty, "head", contents)
+            }
             if (title != "") {
                 string = _table_make_title(title, contents["len"]) string
             }
         }
         if (style=="rst" && ( i>2 || i==2 && header == "no"))
             string = string _table_format_line(empty, "foot", contents) # Semantic bug
-        string = string _table_format_line(contents[i], "row", contents)
+        if (i==1 && length( _table_head_row) > 0 && header != "no") {
+            # jira formats the table row with contents special
+            string = string _table_format_line(contents[i], "head_row", contents)
+        } else {
+            # The main processor
+            string = string _table_format_line(contents[i], "row", contents)
+        }
         if (i==1 && header~/^(y|)$/)
             string = string _table_format_line(empty, "sep", contents)
         if (i==contents["row_count"])
@@ -162,6 +181,9 @@ function _table_format_line(line, role, contents,
 function _table_pad_left(string, width, padchar,        _s) {
     if ( length(string) > width )
         string = substr(string, 1, width)
+    if (length(padchar) == 0) {
+        return string
+    }
     _s = padchar string
     while ( length(_s) <= width )
         _s = _s padchar
@@ -171,6 +193,9 @@ function _table_pad_left(string, width, padchar,        _s) {
 function _table_pad_right(string, width, padchar,     _s) {
     if ( length(string) > width )
         string = substr(string, 1, width)
+    if (length(padchar)==0) {
+        return string
+    }
     _s = string padchar
     while (length(_s) <= width)
         _s = padchar _s

@@ -17,7 +17,7 @@
 
 BEGIN {
     #opt_debug="y"
-    regopt("short=s; long=style; flag=style; has_arg=yes; vals=rst|psql|md; desc=Select output style.")
+    regopt("short=s; long=style; flag=style; has_arg=yes; vals=rst|psql|md|jira; desc=Select output style.")
     regopt("short=d; long=debug; flag=debug; has_arg=no; desc=Output debugging stuff")
     regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
@@ -28,6 +28,7 @@ BEGIN {
     regopt("long=rst; flag=style; val=rst; has_arg=no; desc=Style reStructuredText")
     regopt("long=psql; flag=style; val=psql; has_arg=no; desc=Style Unicode psql")
     regopt("long=md; flag=style; val=md; has_arg=no; desc=Style markdown")
+    regopt("long=jira; flag=style; val=jira; has_arg=no; desc=Style jira")
     regopt("long=left-margin; flag=_table_left_margin; has_arg=yes; desc=Sets the left margin")
 
     parseopt(opt)
@@ -37,8 +38,8 @@ BEGIN {
         _assert_exit = 0
         exit
     }
-    if (style == "md" && length(title)>0) {
-        print "Title is not supported with style markdown. Ignoring.">"/dev/stderr"
+    if ((style == "md" || style == "jira") && length(title)>0) {
+        printf("Title is not supported with style %s. Ignoring.\n", style)>"/dev/stderr"
     }
     offset = 0
 }

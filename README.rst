@@ -25,6 +25,9 @@ Let the console speak for itself:
 --md
    Output a Markdown table
 
+--jira
+   Output a Jira formatted table
+
 --title STRING
     Set a centered title spanning all the columns.
 

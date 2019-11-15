@@ -18,7 +18,7 @@ SYNOPSIS
 
 
 table [-h|--help] [-F|--field-separator] [-R|--record-separator] [-H|--no-header] [-d|--debug]
-[-s|--style [rst|psql|md]|--rst|--psql|--md] [files]
+[-s|--style [rst|psql|md|jira]|--rst|--psql|--md|--jira] [files]
 
 DESCRIPTION
 ===========
@@ -33,7 +33,7 @@ OPTIONS
     display usage info
 
 -s|--style
-    Select a table formatting style. Currently available are **md**, **rst** and **psql** (default).
+    Select a table formatting style. Currently available are **md**, **rst**, **jira**, and **psql** (default).
 
 --rst
     Short for ``--style rst``
@@ -43,6 +43,9 @@ OPTIONS
 
 --md
    Short for ``--style md``
+
+--jira
+   Short for ``--style jira``
 
 -F|--field-separator
     Equivalent to ``awk``. Set the field separator. Default is ``[ \t\n]+``. Example: ``-F,`` separates on comma's.
