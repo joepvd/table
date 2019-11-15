@@ -23,7 +23,9 @@ function make_table(contents,       i,j) {
     return _table_styler(contents)
 }
 
-function _table_analyze(contents,        row, col) {
+function _table_analyze(contents,
+                    row, col, left, fill, middle, right) {
+    left=1; fill=2; middle=3; right=4;
     if (style == "") 
         style = "psql"
     # Define some arrays containing special characters. 
@@ -47,12 +49,13 @@ function _table_analyze(contents,        row, col) {
     if (title != "" && style == "rst") {
         split("+=++", _table_head, "")
     }
-    if (style == "rst" && _table_left_margin == "")
+    if (style == "rst" && _table_left_margin == "") {
         _table_left_margin = "    " 
+    }
     if (style == "md") {
         split("^^^^", _table_title, "") # ^ will be skipped
         split("^^^^", _table_head, "") # ^ will be skipped
-        split("|-||", _table_sep, "")
+        split("| ;-; | ; |", _table_sep, ";")
         split("| ||", _table_row, "")
         split("^^^^", _table_foot, "") # ^ will be skipped
     }
@@ -94,7 +97,8 @@ function _table_styler(contents,                string, i, j, empty) {
 }
 
 function _table_make_title(title, arr,
-                       i, s, _len) {
+                       i, s, len,
+                       left, fill, middle, right) {
     left=1; fill=2; middle=3; right=4;
 
     if (SYMTAB["_table_title"][left] == "^" && SYMTAB["_table_title"][fill] == "^" && SYMTAB["_table_title"][middle] == "^" && SYMTAB["_table_title"][right] == "^") {
@@ -102,27 +106,27 @@ function _table_make_title(title, arr,
     }
 
     for (c in arr)
-        _len += arr[c]
-    _len = _len \
+        len += arr[c]
+    len = len \
            + 2 * ( length(_table_row[left]) + length(_table_row[right]) ) \
            + 3 * ( length(arr) - 1 ) \
            - 4
     # the first line: 
     s = _table_left_margin \
         _table_title[left] \
-        _table_pad_left("", _len, _table_title[fill]) \
+        _table_pad_left("", len, _table_title[fill]) \
         _table_title[right] "\n"
     # The second line: 
     s = s \
         _table_left_margin \
         _table_row[left] \
-        _table_pad_center(title, _len, " ") \
+        _table_pad_center(title, len, " ") \
         _table_row[right] "\n"
     return s
 }
 
 function _table_format_line(line, role, contents,            
-                    line_str, glyph, i, cell, 
+                    line_str, glyph, i, cell, len,
                     left, fill, middle, right) {
     # Variable initialization for character retrieval:
     left=1; fill=2; middle=3; right=4;
@@ -136,13 +140,18 @@ function _table_format_line(line, role, contents,
     # And construct string:
     for (i=1; i<=contents["col_count"]; i++) {
         cell = line[i]
-        # Remove trailing newlines (needed for `--rst`):
+        # Remove trailing newlines (needed for custom record seperator):
         sub(/[\r\n]+$/, "", cell)
-        cell = _table_pad_left(cell, contents["len"][i], SYMTAB[glyph][fill])
-        if (i == 1) 
+        len = contents["len"][i]
+        if (role == "sep") {
+            len = len - 2 * int(length(SYMTAB[glyph][middle])/2)
+        }
+        cell = _table_pad_left(cell, len, SYMTAB[glyph][fill])
+        if (i == 1) {
             line_str = _table_left_margin SYMTAB[glyph][left] cell
-        else
+        } else {
             line_str = line_str SYMTAB[glyph][middle] cell
+        }
     }
     return line_str SYMTAB[glyph][right] "\n"
 }
