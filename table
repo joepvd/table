@@ -9,7 +9,7 @@
 #
 # Depends on ngetopt.awk for command line option parsing. 
 #
-# Written by Joep van Delft, 2014, 2015
+# Written by Joep van Delft, 2014, 2015, 2019
 
 @include "ngetopt.awk"
 @include "libtable"
@@ -17,7 +17,7 @@
 
 BEGIN {
     #opt_debug="y"
-    regopt("short=s; long=style; flag=style; has_arg=yes; vals=rst|psql; desc=Select output style.")
+    regopt("short=s; long=style; flag=style; has_arg=yes; vals=rst|psql|md; desc=Select output style.")
     regopt("short=d; long=debug; flag=debug; has_arg=no; desc=Output debugging stuff")
     regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
@@ -27,6 +27,7 @@ BEGIN {
     regopt("short=T; long=title; flag=title; has_arg=yes; desc=Set argument as title")
     regopt("long=rst; flag=style; val=rst; has_arg=no; desc=Style reStructuredText")
     regopt("long=psql; flag=style; val=psql; has_arg=no; desc=Style Unicode psql")
+    regopt("long=md; flag=style; val=md; has_arg=no; desc=Style markdown")
     regopt("long=left-margin; flag=_table_left_margin; has_arg=yes; desc=Sets the left margin")
 
     parseopt(opt)
@@ -35,6 +36,9 @@ BEGIN {
         print usage()
         _assert_exit = 0
         exit
+    }
+    if (style == "md" && length(title)>0) {
+        print "Title is not supported with style markdown. Ignoring.">"/dev/stderr"
     }
     offset = 0
 }
@@ -59,3 +63,4 @@ END {
         walk_array(contents, "contents")
 }
 
+# vim: ts=4 sw=4 sts=4 et

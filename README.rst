@@ -22,6 +22,9 @@ Let the console speak for itself:
 --rst
     Output a table for reStructuredText
 
+--md
+   Output a Markdown table
+
 --title STRING
     Set a centered title spanning all the columns.
 
@@ -54,8 +57,3 @@ Bugs
 Probably.  Pull requests or issues welcome over at GitHub_.
 
 .. _GitHub: https://github.com/joepvd/table
-
-
-
-
-

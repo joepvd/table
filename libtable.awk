@@ -49,6 +49,13 @@ function _table_analyze(contents,        row, col) {
     }
     if (style == "rst" && _table_left_margin == "")
         _table_left_margin = "    " 
+    if (style == "md") {
+        split("^^^^", _table_title, "") # ^ will be skipped
+        split("^^^^", _table_head, "") # ^ will be skipped
+        split("|-||", _table_sep, "")
+        split("| ||", _table_row, "")
+        split("^^^^", _table_foot, "") # ^ will be skipped
+    }
 
     # Adds some meta data to the array `contents'. 
     if (! ("row_count" in contents)) {
@@ -88,23 +95,29 @@ function _table_styler(contents,                string, i, j, empty) {
 
 function _table_make_title(title, arr,
                        i, s, _len) {
+    left=1; fill=2; middle=3; right=4;
+
+    if (SYMTAB["_table_title"][left] == "^" && SYMTAB["_table_title"][fill] == "^" && SYMTAB["_table_title"][middle] == "^" && SYMTAB["_table_title"][right] == "^") {
+        return
+    }
+
     for (c in arr)
         _len += arr[c]
     _len = _len \
-           + 2 * ( length(_table_row[1]) + length(_table_row[4]) ) \
+           + 2 * ( length(_table_row[left]) + length(_table_row[right]) ) \
            + 3 * ( length(arr) - 1 ) \
            - 4
     # the first line: 
     s = _table_left_margin \
-        _table_title[1] \
-        _table_pad("", _len, _table_title[2]) \
-        _table_title[4] "\n"
+        _table_title[left] \
+        _table_pad_left("", _len, _table_title[fill]) \
+        _table_title[right] "\n"
     # The second line: 
     s = s \
         _table_left_margin \
-        _table_row[1] \
+        _table_row[left] \
         _table_pad_center(title, _len, " ") \
-        _table_row[4] "\n"
+        _table_row[right] "\n"
     return s
 }
 
@@ -116,12 +129,16 @@ function _table_format_line(line, role, contents,
 
     glyph = "_table_"role
 
+    if (SYMTAB[glyph][left] == "^" && SYMTAB[glyph][fill] == "^" && SYMTAB[glyph][middle] == "^" && SYMTAB[glyph][right] == "^") {
+        return
+    }
+
     # And construct string:
     for (i=1; i<=contents["col_count"]; i++) {
         cell = line[i]
-        # Remove trailing newlines (needed for `--rs`):
+        # Remove trailing newlines (needed for `--rst`):
         sub(/[\r\n]+$/, "", cell)
-        cell = _table_pad(cell, contents["len"][i], SYMTAB[glyph][fill])
+        cell = _table_pad_left(cell, contents["len"][i], SYMTAB[glyph][fill])
         if (i == 1) 
             line_str = _table_left_margin SYMTAB[glyph][left] cell
         else
@@ -137,11 +154,6 @@ function _table_pad_left(string, width, padchar,        _s) {
     while ( length(_s) <= width )
         _s = _s padchar
     return _s padchar
-}
-
-function _table_pad(string, width, padchar) {
-    # Depreciated function. 
-    return _table_pad_left(string, width, padchar)
 }
 
 function _table_pad_right(string, width, padchar,     _s) {
@@ -174,3 +186,5 @@ END {
     if (length(_assert_exit) > 0)
         exit _assert_exit
 }
+
+# vim: ts=4 sw=4 sts=4 et

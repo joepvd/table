@@ -34,7 +34,7 @@ The interface is not stable yet.  Claiming this list of global variables probabl
 Configuration happens through global variables.  The following are listened to: 
 
 style
-    The style of the table.  Currently recongnized: ``psql`` and ``rst``. 
+    The style of the table.  Currently recongnized: ``psql``, ``rst``, and ``md``.
 
 debug
     Put debugging info to STDERR

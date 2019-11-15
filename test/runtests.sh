@@ -18,7 +18,8 @@
 # If the results differ, this fact will be reported, and a file with extension
 # `.out` will be left in the file system for examination.
 
-project="$( cd ..; cwd="$(pwd)"; echo ${cwd##*/} )"
+project_dir="$(git rev-parse --show-toplevel)"
+project="${project_dir##*/}"
 export AWKPATH="..:$(gawk 'BEGIN{print ENVIRON["AWKPATH"]}')"
 echo "Testrun $(date) of $project"
 

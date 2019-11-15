@@ -18,7 +18,7 @@ SYNOPSIS
 
 
 table [-h|--help] [-F|--field-separator] [-R|--record-separator] [-H|--no-header] [-d|--debug]
-[-s|--style [rst|psql]|--rst|psql] [files]
+[-s|--style [rst|psql|md]|--rst|--psql|--md] [files]
 
 DESCRIPTION
 ===========
@@ -33,13 +33,16 @@ OPTIONS
     display usage info
 
 -s|--style
-    Select a table formatting style. Currently available are **rst** and **psql** (default).  
+    Select a table formatting style. Currently available are **md**, **rst** and **psql** (default).  
 
 --rst
     Short for ``--style rst``
 
 --psql
     Short for ``--style psql``
+
+--md
+   Short for ``--style md``
 
 -F|--field-separator
     Equivalent to ``awk``. Set the field separator. Default is ``[ \t\n]+``. Example: ``-F,`` separates on comma's. 
@@ -51,7 +54,7 @@ OPTIONS
     Do not consider the first line of input as the table header. 
 
 -T|--title
-    Set a title.  This string will be centered along the width of the whole table.
+    Set a title.  This string will be centered along the width of the whole table. (Not supported for mardown)
 
 -d|--debug
     Output debugging info.
