@@ -57,7 +57,7 @@ OPTIONS
     Do not consider the first line of input as the table header.
 
 -T|--title
-    Set a title.  This string will be centered along the width of the whole table. (Not supported for mardown)
+    Set a title.  This string will be centered along the width of the whole table. (Not supported for markdown and jira)
 
 -d|--debug
     Output debugging info.
