@@ -69,6 +69,9 @@ function _table_analyze(contents,
         contents["col_count"] = _table_max(contents["col_count"],
                                     length(contents[row]))
         for (col=1; col in contents[row]; col++) {
+            if (style == "md" && row == 1) {
+                contents["len"][col] = 3
+            }
             contents["len"][col] = _table_max(contents["len"][col],
                                        length(contents[row][col]))
         }
