@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 #
 # Test script to run all the tests in the directory of the tests. One awk-file
 # where some command line options are defined shall be run for all tests in
@@ -56,9 +56,9 @@ command rm -f *.out || exit 1
 for testcase in *.test; do
     testname="${testcase%.*}"
     # Do the test.
-    sh "${testname}.test" >"${testname}.out" 2>&1
+    bash "${testname}.test" >"${testname}.out" 2>&1
 
-    if ! [[ -r "${testname}.ok" ]]
+    if ! [ -r "${testname}.ok" ]
     then
         fail "No output to compare to."
         continue

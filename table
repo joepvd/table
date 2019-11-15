@@ -15,11 +15,17 @@
 @include "libtable"
 @include "walkarray"
 
+function display_version(    p) {
+    split(ENVIRON["_"], p, "/")
+    return sprintf("%s version %s", p[length(p)], "v0.3.0")
+}
+
 BEGIN {
     #opt_debug="y"
     regopt("short=s; long=style; flag=style; has_arg=yes; vals=rst|psql|md|jira; desc=Select output style.")
     regopt("short=d; long=debug; flag=debug; has_arg=no; desc=Output debugging stuff")
     regopt("short=h; long=help; flag=help; has_arg=no; desc=Show usage information")
+    regopt("short=v; long=version; flag=version; has_arg=no; desc=Show version information")
     regopt("short=F; long=field-separator; flag=FS; has_arg=yes; desc=Sets the field separator")
     regopt("short=R; long=record-separator; flag=RS; has_arg=yes; desc=Sets the record separator")
     regopt("short=H; long=no-header; flag=header; val=no; has_arg=no; desc=Disable header")
@@ -33,7 +39,13 @@ BEGIN {
 
     parseopt(opt)
 
+    if (version == "yes") {
+        _assert_exit = 0
+        print display_version()
+        exit
+    }
     if (help == "yes") {
+        print display_version()
         print usage()
         _assert_exit = 0
         exit

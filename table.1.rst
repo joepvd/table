@@ -9,7 +9,7 @@ Display text in a table
 :Author: joepvd
 :Date: 2015-03-29
 :Copyright: GPLv2
-:Version: 0.2
+:Version: 0.3
 :Manual section: 1
 :Manual group: Text processing
 
